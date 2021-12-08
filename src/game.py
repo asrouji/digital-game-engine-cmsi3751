@@ -89,19 +89,25 @@ class Game():
                         location = self.LOCATION_LIST[i]
                         print("[" + str(i+1) + "] " + location, end="  ")
                     print("\n")
-                    npcs = input(player + ", NPCs to listen to (separated by space): ").upper()
+                    if (self.round == 1):
+                        randKey = random.choice(list(self.interactions.keys()))
+                        randInnerKey = random.choice(
+                            list(self.interactions[randKey].keys()))
+                        print("Starting Hint: " +
+                              self.interactions[randKey][randInnerKey][1] + '\n')
+                    npcs = input(
+                        player + ", NPCs to listen to (separated by space): ").upper()
                     npcs = npcs.split()
-                    if len(npcs) > 2:
-                        location = npcs[2]
-                    else: 
-                        location = int(input(player + ", Location of NPCs (use # above): "))
+                    location = int(
+                        input(player + ", Location of NPCs (use # above): "))
                     print("")
                     if npcs[0][0] in self.interactions[npcs[1][0]] and self.interactions[npcs[1][0]][npcs[0][0]][0] + 1 == location:
                         print(self.interactions[npcs[1][0]][npcs[0][0]][1])
                         print(self.interactions[npcs[1][0]][npcs[0][0]][2])
                     else:
                         print('Conversation is Private')
-                    cont = input('\nPress Enter to continue, or G to guess the impostor: ')
+                    cont = input(
+                        '\nPress Enter to continue, or G to guess the impostor: ')
                     clear()
                     if (cont.upper() == 'G'):
                         imp = input('Who is the impostor? ')
@@ -114,6 +120,7 @@ class Game():
                     input('Error occured. Press Enter to continue...')
                     clear()
                     continue
+
 
 clear()
 game = Game()
