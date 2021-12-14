@@ -7,20 +7,25 @@ def clear(): return os.system('cls')
 
 class Game():
 
-    NPC_LIST = ["R", "O", "Y", "G", "B", "P"]
-    LOCATION_LIST = ["Market", "Gym", "Beach", "Coffee Shop", "Park", "Office"]
+    NPC_LIST = ["A", "B", "C", "D", "E", "F"]
+    LOCATION_LIST = ["Market", "Office", "Park", "Gym", "Coffee Shop", "Beach"]
+    SUSPECT_COUNT = 4
 
     def __init__(self):
         self.round = 0
+        self.traitor = random.choice(self.NPC_LIST)
         self.players = self.getPlayers()
-        self.impostor = random.choice(self.NPC_LIST)
         self.interactions = self.generateInteractions()
 
     def getPlayers(self):
-        players = []
+        players = {}
         player_count = int(input("Number of Players: "))
         for i in range(1, player_count + 1):
-            players.append(input("Player " + str(i) + " Name: "))
+            temp = self.NPC_LIST.copy()
+            temp.remove(self.traitor)
+            suspects = random.sample(temp, self.SUSPECT_COUNT - 1)
+            suspects.insert(random.randint(0, len(suspects)), self.traitor)
+            players[input("Player " + str(i) + " Name: ")] = suspects
         clear()
         return players
 
@@ -40,7 +45,7 @@ class Game():
                     randomLocation, "", "No Intel"]
                 temp.remove(randomPlayer)
         temp = self.NPC_LIST.copy()
-        temp.remove(self.impostor)
+        temp.remove(self.traitor)
         current = random.choice(temp)
         break_at_end = False
         while len(temp) > 0:
@@ -60,9 +65,9 @@ class Game():
                                                   self.LOCATION_LIST[location])
                     if not break_at_end and random.randint(0, 3) == 1 and interactions[npc][key][2] == 'No Intel':
                         interactions[npc][key][2] = current + \
-                            " is not the impostor"
+                            " is not the traitor"
                         interactions[key][npc][2] = current + \
-                            " is not the impostor"
+                            " is not the traitor"
                         temp.remove(current)
                         if len(temp) != 0:
                             current = random.choice(temp)
@@ -76,12 +81,11 @@ class Game():
         clear()
         while True:
             self.round += 1
-            for player in self.players:
+            for player in list(self.players.keys()):
+                # print(self.interactions)
                 try:
-                    # print(game.interactions)
-                    print("NPCs: ", end="")
-                    for i in range(len(self.NPC_LIST)):
-                        npc = self.NPC_LIST[i]
+                    print("Suspects: ", end="")
+                    for npc in self.players[player]:
                         print(npc, end=" ")
                     print("")
                     print("Locations: ", end="")
@@ -90,6 +94,7 @@ class Game():
                         print("[" + str(i+1) + "] " + location, end="  ")
                     print("\n")
                     if (self.round == 1):
+                        input('Press Enter to see starting hint...')
                         randKey = random.choice(list(self.interactions.keys()))
                         randInnerKey = random.choice(
                             list(self.interactions[randKey].keys()))
@@ -107,15 +112,17 @@ class Game():
                     else:
                         print('Conversation is Private')
                     cont = input(
-                        '\nPress Enter to continue, or G to guess the impostor: ')
+                        '\nPress Enter to continue, or G to guess the traitor: ')
                     clear()
                     if (cont.upper() == 'G'):
-                        imp = input('Who is the impostor? ')
-                        if imp.upper()[0] == self.impostor:
+                        imp = input('Who is the traitor? ')
+                        if imp.upper()[0] == self.traitor:
                             print('The winner is ' + player + '!')
                             return
                         else:
                             print('Incorrect')
+                            input('\nPress Enter to continue...')
+                            clear()
                 except:
                     input('Error occured. Press Enter to continue...')
                     clear()
