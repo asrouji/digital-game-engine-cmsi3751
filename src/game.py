@@ -82,7 +82,9 @@ class Game():
         while True:
             self.round += 1
             for player in list(self.players.keys()):
-                # print(self.interactions)
+                input('Press Enter to begin turn...')
+                # print(self.interactions) # <- shows the full dictionary
+                clear()
                 try:
                     print("Suspects: ", end="")
                     for npc in self.players[player]:
@@ -94,7 +96,6 @@ class Game():
                         print("[" + str(i+1) + "] " + location, end="  ")
                     print("\n")
                     if (self.round == 1):
-                        input('Press Enter to see starting hint...')
                         randKey = random.choice(list(self.interactions.keys()))
                         randInnerKey = random.choice(
                             list(self.interactions[randKey].keys()))
